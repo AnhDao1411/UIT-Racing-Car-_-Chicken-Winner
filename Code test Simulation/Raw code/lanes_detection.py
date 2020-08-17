@@ -160,7 +160,7 @@ def process_image(image):
     roi_image = region_of_interest(canny_edges, vertices)
 
     
-    lines = cv2.HoughLinesP(roi_image, rho = 2, theta = 0.0001, threshold = 20,  
+    lines = cv2.HoughLinesP(roi_image, rho = 2, theta = np.pi/180, threshold = 20,  
                             minLineLength = 20,  
                             maxLineGap = 5) 
 
