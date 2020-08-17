@@ -8,7 +8,7 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 #------------- Add library ------------#
-
+import lanes_detection as ld
 #--------------------------------------#
 
 # initialize our server
@@ -32,7 +32,7 @@ def telemetry(sid, data):
         image = Image.open(BytesIO(base64.b64decode(data["image"])))
         image = np.asarray(image)
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
+        
         """
         - Chương trình đưa cho bạn 3 giá trị đầu vào:
             * steering_angle: góc lái hiện tại của xe
@@ -50,7 +50,9 @@ def telemetry(sid, data):
         sendBack_Speed = 0
         try:
             #------------------------------------------  Work space  ----------------------------------------------#
-
+            lines = ld.process_image(image)
+            combo_image = cv2.addWeighted(image, 0.8, lines, 1, 1)
+            cv2.imshow("image", combo_image)
             cv2.waitKey(1)
             #------------------------------------------------------------------------------------------------------#
             print('{} : {}'.format(sendBack_angle, sendBack_Speed))
