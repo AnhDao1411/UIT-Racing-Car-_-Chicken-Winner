@@ -65,9 +65,10 @@ def display_lines(image, lines):
 
 #used below
 def get_slope(x1,y1,x2,y2):
-	if x1 == x2:
-		return 0
-    return (y2-y1)/(x2-x1)
+    if x1 == x2:
+        return 0
+    else:
+        return (y2-y1)/(x2-x1)
 
 #thick red lines 
 def draw_lines(img, lines, color=[255, 0, 0], thickness=6):
@@ -105,8 +106,20 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=6):
     
     # to prevent errors in challenge video from dividing by zero
     if((len(l_lane) == 0) or (len(r_lane) == 0)):
-        print ('no lane detected')
-        return img,0
+
+        if len(l_lane) == 0 and len(r_lane) != 0:
+            l_slope.append(get_slope(320, 180, 310, 90))
+            l_lane.append(np.array([[320, 180, 310, 90]]))
+            print(l_lane, r_lane)
+            print("l_lane = 0")
+        elif len(l_lane) != 0 and len(r_lane) == 0:
+            r_slope.append(get_slope(0, 180, 10, 90))
+            r_lane.append(np.array([[0, 180, 10, 90]]))
+            print(l_lane, r_lane)
+            print("r_lane = 0")
+        else:
+            print ('no lane detected')
+            return img,0
         
     #3
     l_slope_mean = np.mean(l_slope,axis =0)
@@ -161,11 +174,12 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=6):
     
 def process_image(image):
     canny_edges = canny_edge_detector(image)
+    
     #find region of interest
     vertices = find_vertices(image)
     roi_image = region_of_interest(canny_edges, vertices)
 
-    
+    cv2.imshow("canny", roi_image)
     lines = cv2.HoughLinesP(roi_image, rho = 2, theta = np.pi/180, threshold = 20,  
                             minLineLength = 20,  
                             maxLineGap = 5) 
