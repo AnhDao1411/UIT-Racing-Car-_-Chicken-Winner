@@ -179,7 +179,6 @@ def process_image(image):
     vertices = find_vertices(image)
     roi_image = region_of_interest(canny_edges, vertices)
 
-    cv2.imshow("canny", roi_image)
     lines = cv2.HoughLinesP(roi_image, rho = 2, theta = np.pi/180, threshold = 20,  
                             minLineLength = 20,  
                             maxLineGap = 5) 
