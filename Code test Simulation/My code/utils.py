@@ -29,7 +29,7 @@ def resize(image):
     return cv2.resize(image, (IMAGE_WIDTH, IMAGE_HEIGHT), cv2.INTER_AREA)
 
 
-def rgb2yuv(image,sigma=0.1):
+def rgb2yuv(image,sigma=0):
     """
     Chuyển ảnh RGB sang YUV
     """
@@ -44,7 +44,7 @@ def rgb2yuv(image,sigma=0.1):
     # blurred = cv2.bilateralFilter(gray,9,75,75)
     blurred = cv2.GaussianBlur(gray, (9, 9), 0)
 
-    edged = cv2.Canny(blurred, lower, upper)
+    edged = cv2.Canny(blurred, lower, upper, cv2.THRESH_BINARY | cv2.THRESH_OTSU, apertureSize = 3)  
     edged = np.repeat(edged[..., np.newaxis], 3, -1)
     return edged
 
