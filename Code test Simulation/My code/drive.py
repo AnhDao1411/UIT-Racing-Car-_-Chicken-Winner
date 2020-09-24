@@ -16,7 +16,7 @@ import utils
 #--------------------------------------#
 
 # Global variable
-MAX_SPEED = 30
+MAX_SPEED = 50
 MAX_ANGLE = 25
 # Tốc độ thời điểm ban đầu
 speed_limit = MAX_SPEED
@@ -77,10 +77,11 @@ def telemetry(sid, data):
             if speed > speed_limit:
                 speed_limit = MIN_SPEED  # giảm tốc độ
             else:
-                speed_limit = MAX_SPEED
+                speed_limit = 30
             throttle = 1.0 - steering_angle**2 - (speed/speed_limit)**2
 
             sendBack_angle = steering_angle*MAX_ANGLE
+
             sendBack_Speed = throttle*MAX_SPEED
 
             cv2.waitKey(1)

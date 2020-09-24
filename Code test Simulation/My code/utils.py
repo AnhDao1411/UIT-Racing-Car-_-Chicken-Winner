@@ -29,7 +29,7 @@ def resize(image):
     return cv2.resize(image, (IMAGE_WIDTH, IMAGE_HEIGHT), cv2.INTER_AREA)
 
 
-def rgb2yuv(image,sigma=0.33):
+def rgb2yuv(image,sigma=0.1):
     """
     Chuyển ảnh RGB sang YUV
     """
@@ -44,7 +44,6 @@ def rgb2yuv(image,sigma=0.33):
     # blurred = cv2.bilateralFilter(gray,9,75,75)
     blurred = cv2.GaussianBlur(gray, (9, 9), 0)
 
-    
     edged = cv2.Canny(blurred, lower, upper)
     edged = np.repeat(edged[..., np.newaxis], 3, -1)
     return edged
@@ -54,9 +53,14 @@ def preprocess(image):
     """
     Pre-process ảnh
     """
+    cv2.imshow("pre", image)
+
     image = crop(image)
     image = resize(image)
     image = rgb2yuv(image)
+    
+    cv2.imshow("YUV", image)
+
     return image
 
 
@@ -169,3 +173,4 @@ def batch_generator(data_dir, image_paths, steering_angles, batch_size, is_train
             if i == batch_size:
                 break
         yield images, steers
+
