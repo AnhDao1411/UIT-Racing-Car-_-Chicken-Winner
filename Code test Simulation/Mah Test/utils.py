@@ -39,9 +39,15 @@ def preprocess(image):
     """
     Combine all preprocess functions into one
     """
+    canny_edges = canny_edge_detector(image)
+    
+    #find region of interest
+    vertices = find_vertices(image)
+    roi_image = region_of_interest(canny_edges, vertices)
+
     image = crop(image)
     image = resize(image)
-    image = rgb2yuv(image)
+    #image = rgb2yuv(image)
     return image
 
 def random_flip(image, steering_angle):

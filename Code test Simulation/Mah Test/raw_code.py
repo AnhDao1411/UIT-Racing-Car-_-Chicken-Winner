@@ -11,6 +11,8 @@ from io import BytesIO
 import lanes_detection as ld
 #--------------------------------------#
 
+count = 0
+
 # initialize our server
 sio = socketio.Server()
 # our flask (web) app
@@ -20,6 +22,7 @@ app = Flask(__name__)
 
 @sio.on('telemetry')
 def telemetry(sid, data):
+    global count
     if data:
 
         steering_angle = 0  # Góc lái hiện tại của xe
@@ -45,18 +48,21 @@ def telemetry(sid, data):
                 + sendBack_angle (góc điều khiển): [-25, 25]  NOTE: ( âm là góc trái, dương là góc phải)
                 + sendBack_Speed (tốc độ điều khiển): [-150, 150] NOTE: (âm là lùi, dương là tiến)
         """
-
+        f = open("train.csv", "a")
         sendBack_angle = 0
         sendBack_Speed = 0
         try:
             #------------------------------------------  Work space  ----------------------------------------------#
-
-            # cv2.imshow("image", image)
             # cv2.imwrite('image.png', image) # save image will be named later
             sendBack_angle = ld.display_line_detection(image)
             sendBack_Speed += ld.throttling(sendBack_angle, speed)
-            cv2.waitKey(1)
 
+            #name = "/home/binh3920/UITCarRacing/Source/Code test Simulation/Mah Test/train/" + str(count) + ".png"
+            #cv2.imwrite(name, image)
+            #f.write(name + "," + str(steering_angle) + "," + str(speed) + "\n")
+            #count += 1
+
+            cv2.waitKey(1)
             #------------------------------------------------------------------------------------------------------#
             print('{} : {}'.format(sendBack_angle, sendBack_Speed))
             send_control(sendBack_angle, sendBack_Speed)
@@ -64,6 +70,7 @@ def telemetry(sid, data):
             print(e)
     else:
         sio.emit('manual', data={}, skip_sid=True)
+    f.close()
 
 
 @sio.on('connect')

@@ -2,10 +2,12 @@ import cv2
 from PIL import Image
 import numpy as np
 import math
+import lanes_detection_rfe as ldr
 
 def canny_edge_detector(img):
     """Applies the Canny transform"""
     gray_image = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)  
+    #gray_image = ldr.to_lda(img)
     img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
     lower_yellow = np.array([20, 100, 100], dtype = "uint8")
@@ -17,7 +19,7 @@ def canny_edge_detector(img):
 
     kernel_size = 5
     blur = cv2.GaussianBlur(mask_yw_image, (kernel_size, kernel_size), 0)  
-
+    
     low_threshold = 50
     high_threshold = 100
     return cv2.Canny(blur, low_threshold, high_threshold)
@@ -107,19 +109,19 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=6):
     # to prevent errors in challenge video from dividing by zero
     if((len(l_lane) == 0) or (len(r_lane) == 0)):
 
-        if len(l_lane) == 0 and len(r_lane) != 0:
-            l_slope.append(get_slope(320, 180, 310, 90))
-            l_lane.append(np.array([[320, 180, 310, 90]]))
-            print(l_lane, r_lane)
-            print("l_lane = 0")
-        elif len(l_lane) != 0 and len(r_lane) == 0:
-            r_slope.append(get_slope(0, 180, 10, 90))
-            r_lane.append(np.array([[0, 180, 10, 90]]))
-            print(l_lane, r_lane)
-            print("r_lane = 0")
-        else:
-            print ('no lane detected')
-            return img,0
+        # if len(l_lane) == 0 and len(r_lane) != 0:
+        #     l_slope.append(get_slope(320, 180, 310, 90))
+        #     l_lane.append(np.array([[320, 180, 310, 90]]))
+        #     print(l_lane, r_lane)
+        #     print("l_lane = 0")
+        # elif len(l_lane) != 0 and len(r_lane) == 0:
+        #     r_slope.append(get_slope(0, 180, 10, 90))
+        #     r_lane.append(np.array([[0, 180, 10, 90]]))
+        #     print(l_lane, r_lane)
+        #     print("r_lane = 0")
+        # else:
+        print ('no lane detected')
+        return img,0
         
     #3
     l_slope_mean = np.mean(l_slope,axis =0)
