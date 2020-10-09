@@ -12,15 +12,16 @@ from io import BytesIO
 from keras.models import load_model
 import argparse
 import utils
-
+import os
 #--------------------------------------#
 
 # Global variable
-MAX_SPEED = 80
+CONST_SPEED = 80
 MAX_ANGLE = 25
+MAX_SPEED = 22
 # Tốc độ thời điểm ban đầu
-speed_limit = MAX_SPEED
-MIN_SPEED = 10
+speed_limit = CONST_SPEED
+MIN_SPEED = 15
 
 # init our model and image array as empty
 model = None
@@ -42,12 +43,12 @@ def telemetry(sid, data):
         image = 0  # Ảnh gốc
 
         steering_angle = float(data["steering_angle"])
+
         speed = float(data["speed"])
         # Original Image
         image = Image.open(BytesIO(base64.b64decode(data["image"])))
         image = np.asarray(image)
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
         """
         - Chương trình đưa cho bạn 3 giá trị đầu vào:
             * steering_angle: góc lái hiện tại của xe
@@ -67,23 +68,23 @@ def telemetry(sid, data):
             #------------------------------------------  Work space  ----------------------------------------------#
 
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
             image = utils.preprocess(image)
             image = np.array([image])
 
             steering_angle = float(model.predict(image, batch_size=1))
 
-            # Tốc độ ta để trong khoảng từ 10 đến 25
+            # Tốc độ ta để trong khoảng từ 15 đến 20
             global speed_limit
             if speed > speed_limit:
                 speed_limit = MIN_SPEED  # giảm tốc độ
             else:
-                speed_limit = 20
+                speed_limit = MAX_SPEED
 
             sendBack_angle = steering_angle*MAX_ANGLE
-
+            
             throttle = 1.0 - steering_angle**2 - (speed/speed_limit)**2
-            sendBack_Speed = throttle*MAX_SPEED
-
+            sendBack_Speed = throttle*CONST_SPEED
             cv2.waitKey(1)
 
             #------------------------------------------------------------------------------------------------------#

@@ -1,7 +1,8 @@
 # Thêm thư viện
-import cv2, os
+import cv2, cv, os
 import numpy as np
 import matplotlib.image as mpimg
+import random
 
 # Kích thước ảnh cho input của model
 IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS = 66, 200, 3
@@ -29,23 +30,25 @@ def resize(image):
     return cv2.resize(image, (IMAGE_WIDTH, IMAGE_HEIGHT), cv2.INTER_AREA)
 
 
-def rgb2yuv(image,sigma=0):
+def rgb2yuv(image,sigma=random.uniform(0, 0.1)):
     """
     Chuyển ảnh RGB sang YUV
     """
-    # return cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
+    # image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
+    # image = cv2.bilateralFilter(image,3,75,75)
     v=np.median(image)
-    image = cv2.bilateralFilter(image,9,75,75)
-    # # cv2.imshow('huy456',im)
     # image = cv2.fastNlMeansDenoisingColored(image,None,10,10,7,21)
     lower = int(max(0, (1.0-sigma)*v))
     upper = int(min(255, (1.0+sigma)*v))
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # blurred = cv2.bilateralFilter(gray,9,75,75)
-    blurred = cv2.GaussianBlur(gray, (9, 9), 0)
-
-    edged = cv2.Canny(blurred, lower, upper, cv2.THRESH_BINARY | cv2.THRESH_OTSU, apertureSize = 3)  
+    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.bilateralFilter(image,3,75,75)
+    # blurred = cv2.GaussianBlur(image, (3, 3), 0)
+    cv2.imshow("blurred", blurred)
+    edged = cv2.Canny(blurred, lower, upper, cv2.THRESH_BINARY + cv2.THRESH_OTSU, apertureSize = 3)  
     edged = np.repeat(edged[..., np.newaxis], 3, -1)
+
     return edged
 
 
