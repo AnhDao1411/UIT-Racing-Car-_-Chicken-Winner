@@ -1,5 +1,5 @@
 # Thêm thư viện
-import cv2, cv, os
+import cv2, os
 import numpy as np
 import matplotlib.image as mpimg
 import random
