@@ -56,13 +56,13 @@ def preprocess(image):
     """
     Pre-process ảnh
     """
-    cv2.imshow("pre", image)
+    # cv2.imshow("pre", image)
 
     image = crop(image)
     image = resize(image)
     image = rgb2yuv(image)
     
-    cv2.imshow("YUV", image)
+    # cv2.imshow("YUV", image)
 
     return image
 
