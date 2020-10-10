@@ -30,23 +30,23 @@ def resize(image):
     return cv2.resize(image, (IMAGE_WIDTH, IMAGE_HEIGHT), cv2.INTER_AREA)
 
 
-def rgb2yuv(image,sigma=random.uniform(0, 0.1)):
+def rgb2yuv(image,sigma=0):
     """
     Chuyển ảnh RGB sang YUV
     """
     # image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
+    # image = cv2.bilateralFilter(image,5,75,75)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
-    # image = cv2.bilateralFilter(image,3,75,75)
     v=np.median(image)
     # image = cv2.fastNlMeansDenoisingColored(image,None,10,10,7,21)
     lower = int(max(0, (1.0-sigma)*v))
     upper = int(min(255, (1.0+sigma)*v))
-    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.bilateralFilter(image,3,75,75)
+    # blurred = cv2.bilateralFilter(image,3,75,75)
     # blurred = cv2.GaussianBlur(image, (3, 3), 0)
-    cv2.imshow("blurred", blurred)
-    edged = cv2.Canny(blurred, lower, upper, cv2.THRESH_BINARY + cv2.THRESH_OTSU, apertureSize = 3)  
+    # cv2.imshow("blurred", blurred)
+    edged = cv2.Canny(image, lower, upper, cv2.THRESH_BINARY + cv2.THRESH_OTSU, apertureSize = 3)  
     edged = np.repeat(edged[..., np.newaxis], 3, -1)
 
     return edged
